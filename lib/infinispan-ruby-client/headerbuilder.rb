@@ -1,12 +1,12 @@
 require 'infinispan-ruby-client/unsigned.rb'
 
 class HeaderBuilder
-	def self.getHeader op
+	def self.getHeader op_code
 		[MAGIC[0].chr, #Magic
 		 Unsigned.encodeVint(0x04), #Message Id			
 		 #0x04.chr, #Message Id			
 		 HT_VERSION.chr, # Version
-		 op, # Opcode
+		 op_code, # Opcode
 		 [], # Cache Name Length
 		 # # 	Cache Name
 		 0.chr, # Flags

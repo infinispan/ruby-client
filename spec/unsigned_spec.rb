@@ -1,6 +1,6 @@
 require '../lib/infinispan-ruby-client.rb'
 
-class MyArray<Array
+class MyTestDoubleSocket<Array
 	def initialize
 		@mypos=0
 	end
@@ -31,7 +31,7 @@ describe Unsigned do
   describe "encoding for unsigned int/longs" do
 
 	before(:each) do
-		@input=MyArray.new
+		@input=MyTestDoubleSocket.new
 	end
 	it "returns 0 for int zero" do
 		@input<<0.chr

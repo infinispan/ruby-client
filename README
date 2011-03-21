@@ -9,7 +9,7 @@ How to use it?
 Look at spec/remotecache_spec.rb :P
 
 Note:
-1) First start a HotRod Server module of Infinispan
+1) First start a HotRod Server module of Infinispan (./startServer.sh -r hotrod)
 
 Features to add:
 * Support cache names (needs to be decided by IFPN Team)
@@ -31,3 +31,4 @@ Features to add:
 * Support for Intelligence Clients and Topologies and Listener
 * Configuration files support
 * Transaction support
+* Support for Apache Avro Marshaller 
