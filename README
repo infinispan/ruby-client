@@ -1,0 +1,9 @@
+This is a Hot Rod ruby client for JBoss Infinispan Data Grid Solution.
+
+It is in development and only GET and PUT opeations are working with some limitations:
+* Just default cache
+* I haven't test it that much
+* More to come :)
+
+How to use it?
+Look at spec/remotecache_spec.rb :P
