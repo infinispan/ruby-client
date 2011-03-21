@@ -12,10 +12,10 @@ Note:
 1) First start a HotRod Server module of Infinispan (./startServer.sh -r hotrod)
 
 Features to add:
-* Support cache names (needs to be decided by IFPN Team)
+* Support cache names (needs to be decided by Infinispan Team)
 * Add ping operation before any call
 * Validate response headers
-* Remaining operations
+* Add Remaining operations
 ** removeWithVersion
 ** putIfAbsentputAll
 ** remove/if
