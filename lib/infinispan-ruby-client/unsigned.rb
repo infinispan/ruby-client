@@ -11,7 +11,6 @@ class Unsigned
 
 	def self.decodeVint(input)
 		b = input.read(1)
-    puts b[0].class
     i = b[0] & 0x7F
 		shift = 7
 		while ((b[0] & 0x80) != 0)

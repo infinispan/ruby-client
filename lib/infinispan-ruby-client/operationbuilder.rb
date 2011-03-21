@@ -9,4 +9,9 @@ class OperationBuilder
     op.header=HeaderBuilder.getHeader(GET[0].chr)
     op
   end
+  def buildPUT()
+    op = Operation.new(@remotecache)
+    op.header=HeaderBuilder.getHeader(PUT[0].chr)
+    op
+  end
 end

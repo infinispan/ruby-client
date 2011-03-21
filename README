@@ -7,3 +7,27 @@ It is in development and only GET and PUT opeations are working with some limita
 
 How to use it?
 Look at spec/remotecache_spec.rb :P
+
+Note:
+1) First start a HotRod Server module of Infinispan
+
+Features to add:
+* Support cache names (needs to be decided by IFPN Team)
+* Add ping operation before any call
+* Validate response headers
+* Remaining operations
+** removeWithVersion
+** putIfAbsentputAll
+** remove/if
+** replace/if
+** containsKey
+** getWithVersion
+** removeWithVersion
+** statistic
+** put/getBulk
+* Support for  lifespanSeconds and maxIdleTimeSeconds
+* Batch support
+* Obtaing Statistics (operation)
+* Support for Intelligence Clients and Topologies and Listener
+* Configuration files support
+* Transaction support
