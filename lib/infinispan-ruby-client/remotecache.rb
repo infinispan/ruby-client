@@ -1,11 +1,12 @@
 require 'socket'
 
 class RemoteCache
-	attr_accessor :host, :port
+	attr_accessor :host, :port, :cache_name
 
-	def initialize host='localhost',port=11222
+	def initialize host="localhost",port=11222,cache_name=""
 		@host = host
 		@port = port
+    @cache_name = cache_name
     @opb = OperationBuilder.new(self)
 	end
 

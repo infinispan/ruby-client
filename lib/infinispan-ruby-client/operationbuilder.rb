@@ -6,12 +6,12 @@ class OperationBuilder
   end
   def buildGET()
     op = Operation.new(@remotecache)
-    op.header=HeaderBuilder.getHeader(GET[0].chr)
+    op.header=HeaderBuilder.getHeader(GET[0].chr,@remotecache.cache_name)
     op
   end
   def buildPUT()
     op = Operation.new(@remotecache)
-    op.header=HeaderBuilder.getHeader(PUT[0].chr)
+    op.header=HeaderBuilder.getHeader(PUT[0].chr,@remotecache.cache_name)
     op
   end
 end
