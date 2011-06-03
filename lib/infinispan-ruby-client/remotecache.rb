@@ -46,6 +46,18 @@ class RemoteCache
     response
 	end
 
+  def get_versioned( key )
+    self.get( key )
+    connection = open_connection( HeaderBuilder.getHeader( GET_WITH_VERSION[0].chr, @name ) )
+    marshal( connection, key )
+    response_header = read_response_header( connection )
+    version = connection.read( 8 )
+    response_body_length = Unsigned.decodeVint( connection )
+    response_body = connection.read( response_body_length )
+    connection.close
+    [ version.to_i, Marshal.load( response_body ) ]
+  end
+
   private
   def open_connection( header )
     socket = TCPSocket.open( @host, @port )

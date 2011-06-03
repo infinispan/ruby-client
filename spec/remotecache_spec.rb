@@ -36,11 +36,11 @@ describe "RemoteCache Functional Test" do
   #  rm.get("stringKey").should == "valorrrrrr"
   #end
 
-  it "should put and read versioned values from the cache" #do
-    #cache = RemoteCache.new
-    #cache.put("a key", "a value")
-    #cache.get_versioned("a key").should == "a value"
-  #end
+  it "should put and read versioned values from the cache" do
+    cache = RemoteCache.new
+    cache.put("a key", "a value")
+    cache.get_versioned("a key").should == [0, "a value"]
+  end
   
   it "should remove versioned values from the cache" 
   it "should put multiple values into the cache" 
