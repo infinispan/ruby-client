@@ -1,4 +1,3 @@
-require '../lib/infinispan-ruby-client.rb'
 
 describe "Header Builder" do
   context "Get Header" do

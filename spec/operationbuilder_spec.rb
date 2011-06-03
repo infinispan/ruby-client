@@ -1,4 +1,3 @@
-require '../lib/infinispan-ruby-client.rb'
 
 describe "Operation Builder" do
   before(:each) do

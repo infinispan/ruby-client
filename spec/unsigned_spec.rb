@@ -1,4 +1,3 @@
-require '../lib/infinispan-ruby-client.rb'
 
 class MyTestDoubleSocket<Array
 	def initialize

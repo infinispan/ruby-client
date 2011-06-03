@@ -1,4 +1,3 @@
-require '../lib/infinispan-ruby-client.rb'
 
 describe "RemoteCache Functional Test" do
   it "Can put and read strings from cache" do
