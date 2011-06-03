@@ -16,7 +16,5 @@
 
 require 'infinispan-ruby-client'
 
-RSpec.configure do |conf|
-end
 
 
