@@ -18,13 +18,13 @@
 describe "RemoteCache Functional Test" do
 
   it "should put and read strings from cache" do
-    rm = RemoteCache.new
+    rm = Infinispan::RemoteCache.new
     rm.put("stringKey","valorrrrrr")
     rm.get("stringKey").should == "valorrrrrr"
   end
 
   it "should put and read ruby objects from cache" do
-    rm = RemoteCache.new
+    rm = Infinispan::RemoteCache.new
     myNow = Time.now
     rm.put("myNow",myNow)
     rm.get("myNow").should == myNow
@@ -37,9 +37,14 @@ describe "RemoteCache Functional Test" do
   #end
 
   it "should put and read versioned values from the cache" do
-    cache = RemoteCache.new
+    cache = Infinispan::RemoteCache.new
     cache.put("a key", "a value")
-    cache.get_versioned("a key").should == [0, "a value"]
+    first_version = cache.get_versioned("a key")
+    cache.put("a key", "a 2nd value")
+    second_version = cache.get_versioned("a key")
+    first_version[0].should_not == second_version[0]
+    first_version[1].should == "a value"
+    second_version[1].should == "a 2nd value"
   end
   
   it "should remove versioned values from the cache" 

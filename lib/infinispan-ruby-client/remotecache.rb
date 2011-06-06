@@ -16,63 +16,104 @@
 
 require 'socket'
 
-class RemoteCache
-	attr_accessor :host, :port, :name
+module Infinispan
+  class RemoteCache
+    include Infinispan::Constants
 
-	def initialize( host="localhost", port=11222, name="" )
-		@host = host
-		@port = port
-    @name = name
-	end
+    attr_accessor :host, :port, :name
 
-  def get( key )
-    connection = open_connection( HeaderBuilder.getHeader( GET[0].chr, @name ) )
-    marshal( connection, key )
-    response_header = read_response_header( connection )
-    response_body_length = Unsigned.decodeVint( connection )
-    response_body = connection.read( response_body_length )
-    connection.close
-    Marshal.load( response_body )
-	end
-	
+    def initialize( host="localhost", port=11222, name="" )
+      @host = host
+      @port = port
+      @name = name
+    end
 
-	def put( key, value )
-    connection = open_connection( HeaderBuilder.getHeader(PUT[0].chr, @name) )
-    marshal( connection, key )
-		connection.write [0x00.chr,0x00.chr]
-    marshal( connection, value )
-    response = read_response_header( connection )
-    connection.close
-    response
-	end
+    def get( key )
+      do_op( :operation => GET[0], :key => key )
+    end
+    
+    def put( key, value )
+      do_op( :operation => PUT[0], :key => key, :value => value )
+    end
 
-  def get_versioned( key )
-    self.get( key )
-    connection = open_connection( HeaderBuilder.getHeader( GET_WITH_VERSION[0].chr, @name ) )
-    marshal( connection, key )
-    response_header = read_response_header( connection )
-    version = connection.read( 8 )
-    response_body_length = Unsigned.decodeVint( connection )
-    response_body = connection.read( response_body_length )
-    connection.close
-    [ version.to_i, Marshal.load( response_body ) ]
+    def get_versioned( key )
+      do_op( :operation => GET_WITH_VERSION[0], :key => key )
+    end
+
+    private
+    def do_op( options )
+      options[:cache] ||= @name
+
+      send_op    = Operation.send[ options[:operation] ]
+      recv_op    = Operation.receive[ options[:operation] ]
+
+      if (send_op && recv_op)
+        TCPSocket.open( @host, @port ) do |connection|
+          send_op.call( connection, options )
+          recv_op.call( connection )
+        end
+      else
+        raise "Unexpected operation: #{options[:operation]}"
+      end
+
+    end
   end
 
-  private
-  def open_connection( header )
-    socket = TCPSocket.open( @host, @port )
-		socket.write( header )
-    socket
-  end
+  module Operation
+    include Infinispan::Constants
+    def self.send 
+      {
+        GET[0]                      => KEY_ONLY_SEND,
+        GET_WITH_VERSION[0]         => KEY_ONLY_SEND,
+        PUT[0]                      => KEY_VALUE_SEND
+      }
+    end
 
-  def marshal( connection, obj )
-		mkey = Marshal.dump( obj )
-		connection.write( Unsigned.encodeVint( mkey.size ) )
-    connection.write( mkey )
-  end
+    def self.receive 
+      {
+        GET[0]                      => KEY_ONLY_RECV,
+        GET_WITH_VERSION[0]         => GET_WITH_VERSION_RECV,
+        PUT[0]                      => PUT_RECV
+      }
+    end
 
-  def read_response_header( connection )
-    connection.read( 5 )
-  end
+    KEY_ONLY_SEND = lambda { |connection, options|
+      connection.write( HeaderBuilder.getHeader(options[:operation], options[:cache]) )
+      mkey = Marshal.dump( options[:key] )
+      connection.write( Unsigned.encodeVint( mkey.size ) )
+      connection.write( mkey )
+    }
 
+    KEY_VALUE_SEND = lambda { |connection, options|
+      connection.write( HeaderBuilder.getHeader(options[:operation], options[:cache]) )
+      mkey = Marshal.dump( options[:key] )
+      connection.write( Unsigned.encodeVint( mkey.size ) )
+      connection.write( mkey )
+      connection.write [0x00.chr,0x00.chr]
+      mkey = Marshal.dump( options[:value] )
+      connection.write( Unsigned.encodeVint( mkey.size ) )
+      connection.write( mkey )
+    }
+
+    KEY_ONLY_RECV = lambda { |connection|
+      connection.read( 5 ) # The response header
+      response_body_length = Unsigned.decodeVint( connection )
+      response_body = connection.read( response_body_length )
+      Marshal.load( response_body )
+    }
+
+    GET_WITH_VERSION_RECV = lambda { |connection|
+      response_header = connection.read( 5 ) # The response header
+      version = connection.read( 8 )
+      response_body_length = Unsigned.decodeVint( connection )
+      response_body = connection.read( response_body_length )
+      # Unpack as a signed 64-bit int
+      [ version.unpack("q").to_s, Marshal.load( response_body ) ]
+    }
+
+    PUT_RECV = lambda { |connection|
+      connection.read( 5 ) # Just the response header
+    }
+
+  end
 end

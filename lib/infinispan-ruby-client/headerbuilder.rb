@@ -17,11 +17,12 @@
 require 'infinispan-ruby-client/unsigned.rb'
 
 class HeaderBuilder
-  def self.getHeader op_code,cache_name
+  include Infinispan::Constants
+  def self.getHeader( op_code,cache_name )
     result=[MAGIC[0].chr, #Magic
             Unsigned.encodeVint(0x04), #Message Id
             HT_VERSION.chr, # Version
-            op_code, # Opcode
+            op_code.chr, # Opcode
             cache_name.size==0?[]:Unsigned.encodeVint(cache_name.size)] # Cache Name Length
     
     result<<cache_name unless cache_name.size==0 # # 	Cache Name

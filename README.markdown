@@ -24,7 +24,6 @@ Look at spec/remotecache_spec.rb :P
   * remove/if
   * replace/if
   * containsKey
-  * getWithVersion
   * removeWithVersion
   * statistic
   * put/getBulk
