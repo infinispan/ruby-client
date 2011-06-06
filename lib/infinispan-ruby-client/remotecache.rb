@@ -58,6 +58,10 @@ module Infinispan
       do_op( :operation => REPLACE[0], :key => key, :value => value )
     end
 
+    def replace_if_unmodified( key, version, value )
+      do_op( :operation => REPLACE_IF[0], :key => key, :value => value, :version => version )
+    end
+
     private
     def do_op( options )
       options[:cache] ||= @name
@@ -90,7 +94,8 @@ module Infinispan
         REMOVE[0]                   => KEY_ONLY_SEND,
         CONTAINS[0]                 => KEY_ONLY_SEND,
         PUT_IF_ABSENT[0]            => KEY_VALUE_SEND,
-        REPLACE[0]                  => KEY_VALUE_SEND
+        REPLACE[0]                  => KEY_VALUE_SEND,
+        REPLACE_IF[0]               => REPLACE_IF_SEND
       }
     end
 
@@ -102,7 +107,8 @@ module Infinispan
         REMOVE[0]                   => BASIC_RECV,
         CONTAINS[0]                 => BASIC_RECV,
         PUT_IF_ABSENT[0]            => BASIC_RECV,
-        REPLACE[0]                  => BASIC_RECV
+        REPLACE[0]                  => BASIC_RECV,
+        REPLACE_IF[0]               => BASIC_RECV
       }
     end
 
@@ -115,13 +121,38 @@ module Infinispan
 
     KEY_VALUE_SEND = lambda { |connection, options|
       connection.write( HeaderBuilder.getHeader(options[:operation], options[:cache]) )
+      # write key
       mkey = Marshal.dump( options[:key] )
       connection.write( Unsigned.encodeVint( mkey.size ) )
       connection.write( mkey )
-      connection.write [0x00.chr,0x00.chr]
+
+      # lifespan + max_idle (not supported yet)
+      connection.write( [0x00.chr,0x00.chr] )
+
+      # write value
       mkey = Marshal.dump( options[:value] )
       connection.write( Unsigned.encodeVint( mkey.size ) )
       connection.write( mkey )
+    }
+
+    REPLACE_IF_SEND = lambda { |connection, options|
+      connection.write( HeaderBuilder.getHeader(options[:operation], options[:cache]) )
+
+      # write key
+      key = Marshal.dump( options[:key] )
+      connection.write( Unsigned.encodeVint( key.size ) )
+      connection.write( key )
+
+      # lifespan + max_idle (not supported yet)
+      connection.write( [0x00.chr,0x00.chr] )
+
+      # write version
+      connection.write( options[:version].pack("q") )
+
+      # write value
+      value = Marshal.dump( options[:value] )
+      connection.write( Unsigned.encodeVint( value.size ) )
+      connection.write( value )
     }
 
     KEY_ONLY_RECV = lambda { |connection|
@@ -137,7 +168,7 @@ module Infinispan
       response_body_length = Unsigned.decodeVint( connection )
       response_body = connection.read( response_body_length )
       # Unpack as a signed 64-bit int
-      [ version.unpack("q").to_s, Marshal.load( response_body ) ]
+      [ version.unpack("q"), Marshal.load( response_body ) ]
     }
 
     BASIC_RECV = lambda { |connection|

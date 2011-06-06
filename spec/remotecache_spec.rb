@@ -84,12 +84,24 @@ describe "RemoteCache Functional Test" do
     @cache.replace("thekey", "value2").should be_false
   end
 
-  it "should remove versioned values from the cache" 
+  it "replace_if_unmodified should return true on success" do
+    @cache.put("thekey", "value")
+    version, value = @cache.get_versioned("thekey")
+    @cache.replace_if_unmodified("thekey", version, "value2").should be_true
+    @cache.get("thekey").should == "value2"
+  end
 
+  it "replace_if_unmodified should return false if the key has been altered" do
+    @cache.put("thekey", "value")
+    version, value = @cache.get_versioned("thekey")
+    @cache.put("thekey", "value2")
+    @cache.replace_if_unmodified("thekey", version, "value2").should be_false
+  end
+
+  it "should remove versioned values from the cache" 
   it "should accept cache names" 
   it "should put multiple values into the cache" 
   it "should support remove/if"
-  it "should support replace/if"
   it "should support getting server statistics"
   it "should support put/get bulk"
 end
