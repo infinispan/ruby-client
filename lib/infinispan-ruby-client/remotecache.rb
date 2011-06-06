@@ -40,6 +40,20 @@ module Infinispan
       do_op( :operation => GET_WITH_VERSION[0], :key => key )
     end
 
+    def contains_key?( key )
+      do_op( :operation => CONTAINS[0], :key => key )
+    end
+
+    alias_method :contains_key, :contains_key?
+
+    def contains_key?( key )
+      self.contains_key( key )
+    end
+
+    def remove( key )
+      do_op( :operation => REMOVE[0], :key => key )
+    end
+
     private
     def do_op( options )
       options[:cache] ||= @name
@@ -60,12 +74,17 @@ module Infinispan
   end
 
   module Operation
+
     include Infinispan::Constants
+    include Infinispan::ResponseCode
+
     def self.send 
       {
         GET[0]                      => KEY_ONLY_SEND,
         GET_WITH_VERSION[0]         => KEY_ONLY_SEND,
-        PUT[0]                      => KEY_VALUE_SEND
+        PUT[0]                      => KEY_VALUE_SEND,
+        REMOVE[0]                   => KEY_ONLY_SEND,
+        CONTAINS[0]                 => KEY_ONLY_SEND
       }
     end
 
@@ -73,7 +92,9 @@ module Infinispan
       {
         GET[0]                      => KEY_ONLY_RECV,
         GET_WITH_VERSION[0]         => GET_WITH_VERSION_RECV,
-        PUT[0]                      => PUT_RECV
+        PUT[0]                      => BASIC_RECV,
+        REMOVE[0]                   => BASIC_RECV,
+        CONTAINS[0]                 => BASIC_RECV
       }
     end
 
@@ -111,8 +132,9 @@ module Infinispan
       [ version.unpack("q").to_s, Marshal.load( response_body ) ]
     }
 
-    PUT_RECV = lambda { |connection|
-      connection.read( 5 ) # Just the response header
+    BASIC_RECV = lambda { |connection|
+      header = connection.read( 5 ) # Just the response header
+      header[3] == SUCCESS
     }
 
   end

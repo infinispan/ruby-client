@@ -33,5 +33,35 @@ module Infinispan
     PING             = 0x17, 0x18
     BULK_GET         = 0x19, 0x1A
     ERROR            = 0x50
+
+  end
+
+  module ResponseCode
+
+    SUCCESS             = 0x00
+    NO_ACTION           = 0x01
+    INVALID_KEY         = 0x02
+    INVALID_MAGIC       = 0x81
+    UNKNOWN_COMMAND     = 0x82
+    UNKNOWN_VERSION     = 0x83
+    REQUEST_PARSE_ERROR = 0x84
+    SERVER_ERROR        = 0x85
+    SERVER_TIME_OUT     = 0x86
+
+    def self.status_message( response_code )
+      case response_code
+      when SUCCESS             : "Success"
+      when NO_ACTION           : "No action taken"
+      when INVALID_KEY         : "Invalid key supplied"
+      when INVALID_MAGIC       : "Invalid magic or message"
+      when UNKNOWN_COMMAND     : "Unrecognized command"
+      when UNKNOWN_VERSION     : "Unrecognized version"
+      when REQUEST_PARSE_ERROR : "Request parse error"
+      when SERVER_ERROR        : "Server error"
+      when SERVER_TIME_OUT     : "Server timeout"
+      else                     
+        "Unrecognized response code: #{response_code.chr}"
+      end
+    end
   end
 end
