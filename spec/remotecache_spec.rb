@@ -17,58 +17,67 @@
 
 describe "RemoteCache Functional Test" do
 
+  before(:all) do
+    @cache = Infinispan::RemoteCache.new
+  end
+
+  after(:each) do
+    @cache.remove("thekey")
+  end
+
   it "should put and read strings from cache" do
-    cache = Infinispan::RemoteCache.new
-    cache.put("stringKey", "valorrrrrr").should be_true
-    cache.get("stringKey").should == "valorrrrrr"
+    @cache.put("thekey", "valorrrrrr").should be_true
+    @cache.get("thekey").should == "valorrrrrr"
   end
 
   it "should put and read ruby objects from cache" do
-    cache = Infinispan::RemoteCache.new
-    myNow = Time.now
-    cache.put("myNow",myNow).should be_true
-    cache.get("myNow").should == myNow
+    now = Time.now
+    @cache.put("thekey", now).should be_true
+    @cache.get("thekey").should == now
   end
 
   it "should put and read versioned values from the cache" do
-    cache = Infinispan::RemoteCache.new
-    cache.put("a key", "a value").should be_true
-    first_version = cache.get_versioned("a key")
-    cache.put("a key", "a 2nd value").should be_true
-    second_version = cache.get_versioned("a key")
+    @cache.put("thekey", "a value").should be_true
+    first_version = @cache.get_versioned("thekey")
+    @cache.put("thekey", "a 2nd value").should be_true
+    second_version = @cache.get_versioned("thekey")
     first_version[0].should_not == second_version[0]
     first_version[1].should == "a value"
     second_version[1].should == "a 2nd value"
   end
   
   it "should remove values from the cache" do
-    cache = Infinispan::RemoteCache.new
-    myNow = Time.now
-    cache.put("myNow",myNow)
-    cache.remove("myNow").should be_true
+    now = Time.now
+    @cache.put("thekey", now)
+    @cache.remove("thekey").should be_true
   end
 
   it "should return false when attempting to remove values that don't exist" do
-    cache = Infinispan::RemoteCache.new
-    cache.remove("myNow").should be_false
+    @cache.remove("thekey").should be_false
   end
 
   it "contains_key should return false when the key does not exist" do
-    cache = Infinispan::RemoteCache.new
-    cache.contains_key("foobar").should be_false
+    @cache.contains_key("thekey").should be_false
   end
 
   it "contains_key should return true when the key exists" do
-    cache = Infinispan::RemoteCache.new
-    cache.put("foo", "bar")
-    cache.contains_key("foo").should be_true
+    @cache.put("thekey", "foobar")
+    @cache.contains_key("thekey").should be_true
+  end
+
+  it "put_if_abasent should return true on success" do
+    @cache.put_if_absent("thekey", "foo").should be_true
+  end
+
+  it "put_if_abasent should return false if the key already exists" do
+    @cache.put_if_absent("thekey", "foo")
+    @cache.put_if_absent("thekey", "bar").should be_false
   end
 
   it "should remove versioned values from the cache" 
 
   it "should accept cache names" 
   it "should put multiple values into the cache" 
-  it "should support putIfAbsent"
   it "should support remove/if"
   it "should support replace/if"
   it "should support getting server statistics"

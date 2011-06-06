@@ -36,6 +36,10 @@ module Infinispan
       do_op( :operation => PUT[0], :key => key, :value => value )
     end
 
+    def put_if_absent( key, value )
+      do_op( :operation => PUT_IF_ABSENT[0], :key => key, :value => value )
+    end
+
     def get_versioned( key )
       do_op( :operation => GET_WITH_VERSION[0], :key => key )
     end
@@ -45,10 +49,6 @@ module Infinispan
     end
 
     alias_method :contains_key, :contains_key?
-
-    def contains_key?( key )
-      self.contains_key( key )
-    end
 
     def remove( key )
       do_op( :operation => REMOVE[0], :key => key )
@@ -84,7 +84,8 @@ module Infinispan
         GET_WITH_VERSION[0]         => KEY_ONLY_SEND,
         PUT[0]                      => KEY_VALUE_SEND,
         REMOVE[0]                   => KEY_ONLY_SEND,
-        CONTAINS[0]                 => KEY_ONLY_SEND
+        CONTAINS[0]                 => KEY_ONLY_SEND,
+        PUT_IF_ABSENT[0]            => KEY_VALUE_SEND
       }
     end
 
@@ -94,7 +95,8 @@ module Infinispan
         GET_WITH_VERSION[0]         => GET_WITH_VERSION_RECV,
         PUT[0]                      => BASIC_RECV,
         REMOVE[0]                   => BASIC_RECV,
-        CONTAINS[0]                 => BASIC_RECV
+        CONTAINS[0]                 => BASIC_RECV,
+        PUT_IF_ABSENT[0]            => BASIC_RECV
       }
     end
 
