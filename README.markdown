@@ -20,16 +20,11 @@ Look at spec/remotecache_spec.rb :P
 * Validate response headers
 * Add Remaining operations
   * removeWithVersion
-  * putIfAbsentputAll
-  * remove/if
-  * replace/if
-  * containsKey
-  * removeWithVersion
   * statistic
+  * putAll
   * put/getBulk
 * Support for  lifespanSeconds and maxIdleTimeSeconds
 * Batch support
-* Obtaing Statistics (operation)
 * Support for Intelligence Clients and Topologies and Listener
 * Configuration files support
 * Transaction support
