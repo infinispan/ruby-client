@@ -54,6 +54,10 @@ module Infinispan
       do_op( :operation => REMOVE[0], :key => key )
     end
 
+    def replace( key, value )
+      do_op( :operation => REPLACE[0], :key => key, :value => value )
+    end
+
     private
     def do_op( options )
       options[:cache] ||= @name
@@ -85,7 +89,8 @@ module Infinispan
         PUT[0]                      => KEY_VALUE_SEND,
         REMOVE[0]                   => KEY_ONLY_SEND,
         CONTAINS[0]                 => KEY_ONLY_SEND,
-        PUT_IF_ABSENT[0]            => KEY_VALUE_SEND
+        PUT_IF_ABSENT[0]            => KEY_VALUE_SEND,
+        REPLACE[0]                  => KEY_VALUE_SEND
       }
     end
 
@@ -96,7 +101,8 @@ module Infinispan
         PUT[0]                      => BASIC_RECV,
         REMOVE[0]                   => BASIC_RECV,
         CONTAINS[0]                 => BASIC_RECV,
-        PUT_IF_ABSENT[0]            => BASIC_RECV
+        PUT_IF_ABSENT[0]            => BASIC_RECV,
+        REPLACE[0]                  => BASIC_RECV
       }
     end
 

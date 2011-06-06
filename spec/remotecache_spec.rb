@@ -69,9 +69,19 @@ describe "RemoteCache Functional Test" do
     @cache.put_if_absent("thekey", "foo").should be_true
   end
 
-  it "put_if_abasent should return false if the key already exists" do
+  it "put_if_absent should return false if the key already exists" do
     @cache.put_if_absent("thekey", "foo")
     @cache.put_if_absent("thekey", "bar").should be_false
+  end
+
+  it "replace should return true on success" do
+    @cache.put("thekey", "value1")
+    @cache.replace("thekey", "value2").should be_true
+    @cache.get("thekey").should == "value2"
+  end
+
+  it "replace should return false if the key does not already exist" do
+    @cache.replace("thekey", "value2").should be_false
   end
 
   it "should remove versioned values from the cache" 
