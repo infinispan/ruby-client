@@ -149,9 +149,6 @@ module Infinispan
       connection.write( Unsigned.encodeVint( key.size ) )
       connection.write( key )
 
-      # lifespan + max_idle (not supported yet)
-      connection.write( [0x00.chr,0x00.chr] )
-
       # write version
       connection.write( options[:version] )
     }
