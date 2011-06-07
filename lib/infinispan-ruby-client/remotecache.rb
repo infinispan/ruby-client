@@ -28,6 +28,10 @@ module Infinispan
       @name = name
     end
 
+    def clear
+      do_op( :operation => CLEAR[0] )
+    end
+
     def get( key )
       do_op( :operation => GET[0], :key => key )
     end
@@ -100,7 +104,8 @@ module Infinispan
         CONTAINS[0]                 => KEY_ONLY_SEND,
         PUT_IF_ABSENT[0]            => KEY_VALUE_SEND,
         REPLACE[0]                  => KEY_VALUE_SEND,
-        REPLACE_IF[0]               => REPLACE_IF_SEND
+        REPLACE_IF[0]               => REPLACE_IF_SEND,
+        CLEAR[0]                    => HEADER_ONLY_SEND
       }
     end
 
@@ -114,9 +119,14 @@ module Infinispan
         CONTAINS[0]                 => BASIC_RECV,
         PUT_IF_ABSENT[0]            => BASIC_RECV,
         REPLACE[0]                  => BASIC_RECV,
-        REPLACE_IF[0]               => BASIC_RECV
+        REPLACE_IF[0]               => BASIC_RECV,
+        CLEAR[0]                    => BASIC_RECV
       }
     end
+
+    HEADER_ONLY_SEND = lambda { |connection, options|
+      connection.write( HeaderBuilder.getHeader(options[:operation], options[:cache]) )
+    }
 
     KEY_ONLY_SEND = lambda { |connection, options|
       connection.write( HeaderBuilder.getHeader(options[:operation], options[:cache]) )
@@ -189,6 +199,7 @@ module Infinispan
     }
 
     BASIC_RECV = lambda { |connection|
+      puts "RECEIVING HEADER"
       header = connection.read( 5 ) # Just the response header
       header[3] == SUCCESS
     }

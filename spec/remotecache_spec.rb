@@ -105,10 +105,15 @@ describe "RemoteCache Functional Test" do
     @cache.remove_if_unmodified("thekey", version).should be_true
   end
 
+  it "should support clearing the cache" do
+    @cache.put("thekey", "value")
+    @cache.clear
+    @cache.contains_key("thekey").should be_false
+  end
+
   it "should remove versioned values from the cache" 
   it "should accept cache names" 
   it "should put multiple values into the cache" 
-  it "should support remove/if"
   it "should support getting server statistics"
   it "should support put/get bulk"
 end
