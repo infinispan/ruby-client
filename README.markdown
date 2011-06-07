@@ -11,8 +11,15 @@ This is a Ruby HotRod client for the JBoss Infinispan Data Grid.
 
     require 'infinispan-ruby-client'
     cache = Infinispan::RemoteCache.new => #<Infinispan::RemoteCache:0x100365a78 @name="", @host="localhost", @port=11222> 
+
+    # Store and retrieve a string
     cache.put("Name", "Lance") => true 
     cache.get("Name") => "Lance" 
+
+    # Store and retrieve a ruby object
+    cache.put("Time", Time.now) => true
+    time = cache.get("Time") => Tue Jun 07 17:45:17 -0400 2011
+    time.class => Time
 
 
 # TODO
