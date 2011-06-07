@@ -98,6 +98,13 @@ describe "RemoteCache Functional Test" do
     @cache.replace_if_unmodified("thekey", version, "value2").should be_false
   end
 
+  it "remove_if_unmodified should return true on success" #do
+    #@cache.put("otherkey", "value")
+    #version, value = @cache.get_versioned("otherkey")
+    #@cache.remove_if_unmodified("otherkey", version).should be_true
+    #@cache.get("otherkey").should be_nil
+  #end
+
   it "should remove versioned values from the cache" 
   it "should accept cache names" 
   it "should put multiple values into the cache" 
