@@ -28,12 +28,20 @@ module Infinispan
       @name = name
     end
 
+    def ping
+      do_op( :operation => PING[0] )
+    end
+
     def clear
       do_op( :operation => CLEAR[0] )
     end
 
     def get( key )
       do_op( :operation => GET[0], :key => key )
+    end
+
+    def get_bulk( count = 0 )
+      do_op( :operation => BULK_GET[0], :count => count )
     end
     
     def put( key, value )
@@ -98,6 +106,7 @@ module Infinispan
       {
         GET[0]                      => KEY_ONLY_SEND,
         GET_WITH_VERSION[0]         => KEY_ONLY_SEND,
+        BULK_GET[0]                 => BULK_GET_SEND,
         PUT[0]                      => KEY_VALUE_SEND,
         REMOVE[0]                   => KEY_ONLY_SEND,
         REMOVE_IF[0]                => REMOVE_IF_SEND,
@@ -105,7 +114,8 @@ module Infinispan
         PUT_IF_ABSENT[0]            => KEY_VALUE_SEND,
         REPLACE[0]                  => KEY_VALUE_SEND,
         REPLACE_IF[0]               => REPLACE_IF_SEND,
-        CLEAR[0]                    => HEADER_ONLY_SEND
+        CLEAR[0]                    => HEADER_ONLY_SEND,
+        PING[0]                     => HEADER_ONLY_SEND
       }
     end
 
@@ -113,6 +123,7 @@ module Infinispan
       {
         GET[0]                      => KEY_ONLY_RECV,
         GET_WITH_VERSION[0]         => GET_WITH_VERSION_RECV,
+        BULK_GET[0]                 => BULK_GET_RECV,
         PUT[0]                      => BASIC_RECV,
         REMOVE[0]                   => BASIC_RECV,
         REMOVE_IF[0]                => BASIC_RECV,
@@ -120,12 +131,18 @@ module Infinispan
         PUT_IF_ABSENT[0]            => BASIC_RECV,
         REPLACE[0]                  => BASIC_RECV,
         REPLACE_IF[0]               => BASIC_RECV,
-        CLEAR[0]                    => BASIC_RECV
+        CLEAR[0]                    => BASIC_RECV,
+        PING[0]                     => BASIC_RECV
       }
     end
 
     HEADER_ONLY_SEND = lambda { |connection, options|
       connection.write( HeaderBuilder.getHeader(options[:operation], options[:cache]) )
+    }
+
+    BULK_GET_SEND = lambda { |connection, options|
+      connection.write( HeaderBuilder.getHeader(options[:operation], options[:cache]) )
+      connection.write( Unsigned.encodeVint( options[:count] ) )
     }
 
     KEY_ONLY_SEND = lambda { |connection, options|
@@ -198,8 +215,22 @@ module Infinispan
       [ version, Marshal.load( response_body ) ]
     }
 
+    BULK_GET_RECV = lambda { |connection|
+      response = {}
+      response_header = connection.read( 5 ) # The response header
+      more = connection.read(1).unpack('c')[0]
+      while (more == 1) # The "more" flag
+        key_length = Unsigned.decodeVint( connection )
+        key = connection.read( key_length )
+        value_length = Unsigned.decodeVint( connection )
+        value = connection.read( value_length )
+        response[Marshal.load(key)] = Marshal.load(value)
+        more = connection.read(1).unpack('c')[0]
+      end
+      response
+    }
+
     BASIC_RECV = lambda { |connection|
-      puts "RECEIVING HEADER"
       header = connection.read( 5 ) # Just the response header
       header[3] == SUCCESS
     }

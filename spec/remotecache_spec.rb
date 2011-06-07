@@ -22,7 +22,7 @@ describe "RemoteCache Functional Test" do
   end
 
   after(:each) do
-    @cache.remove("thekey")
+    @cache.clear
   end
 
   it "should put and read strings from cache" do
@@ -101,7 +101,6 @@ describe "RemoteCache Functional Test" do
   it "remove_if_unmodified should return true on success" do
     @cache.put("thekey", "value")
     version, value = @cache.get_versioned("thekey")
-    version, value = @cache.get_versioned("thekey")
     @cache.remove_if_unmodified("thekey", version).should be_true
   end
 
@@ -111,9 +110,33 @@ describe "RemoteCache Functional Test" do
     @cache.contains_key("thekey").should be_false
   end
 
-  it "should remove versioned values from the cache" 
+  # TODO mock the cache so we can test ping failure
+  it "should be able to ping the cache" do
+    @cache.ping.should be_true
+  end
+
+  it "should support getting all cache entries at once" do
+    @cache.put("key-1", "value-1")
+    @cache.put("key-2", "value-2")
+    @cache.put("key-3", "value-3")
+    @cache.put("key-4", "value-4")
+    everything = @cache.get_bulk
+    everything.size.should == 4
+    everything['key-1'].should == 'value-1'
+    everything['key-2'].should == 'value-2'
+    everything['key-3'].should == 'value-3'
+    everything['key-4'].should == 'value-4'
+  end
+
+  it "should support getting a subset of all cache entries at once" do
+    @cache.put("key-1", "value-1")
+    @cache.put("key-2", "value-2")
+    @cache.put("key-3", "value-3")
+    @cache.put("key-4", "value-4")
+    everything = @cache.get_bulk(2)
+    everything.size.should == 2
+  end
+
   it "should accept cache names" 
-  it "should put multiple values into the cache" 
   it "should support getting server statistics"
-  it "should support put/get bulk"
 end
