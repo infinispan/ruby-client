@@ -1,34 +1,30 @@
 # Hotrod Infinispan Ruby Client
-This is a Hot Rod ruby client for JBoss Infinispan Data Grid Solution.
-
-It is in development and only GET and PUT opeations are working with some limitations:
-* Just default cache
-* I haven't test it that much
-* More to come :)
+This is a Ruby HotRod client for the JBoss Infinispan Data Grid.
 
 ## How to use it?
-Look at spec/remotecache_spec.rb :P
 
-## Note:
 1) First start a HotRod Server module of Infinispan
 
     ./startServer.sh -r hotrod
 
-# Features to add
+2) Then write code
+
+    require 'infinispan-ruby-client'
+    cache = Infinispan::RemoteCache.new => #<Infinispan::RemoteCache:0x100365a78 @name="", @host="localhost", @port=11222> 
+    cache.put("Name", "Lance") => true 
+    cache.get("Name") => "Lance" 
+
+
+# TODO
 * Support cache names (needs to be decided by Infinispan Team)
 * Add ping operation before any call
 * Validate response headers
-* Add Remaining operations
-  * removeWithVersion
-  * statistic
-  * putAll
-  * put/getBulk
+* Get server statistics
 * Support for  lifespanSeconds and maxIdleTimeSeconds
-* Batch support
 * Support for Intelligence Clients and Topologies and Listener
 * Configuration files support
-* Transaction support
-* Support for Apache Avro Marshaller 
+* Transaction support # Not available in Infinispan as of version 4.1
+* Support for Apache Avro Marshaller ??
 
 
 # License
