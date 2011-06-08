@@ -1,11 +1,32 @@
-# Hotrod Infinispan Ruby Client
-This is a Ruby HotRod client for the JBoss Infinispan Data Grid.
+# Infinispan Ruby Client
 
-## How to use it?
+[Infinispan](http://www.jboss.org/infinispan) is a scalable, high-availability
+data grid.  This is a native Ruby client implementation of Infinispan's [Hotrod
+client/server protocol](http://community.jboss.org/docs/DOC-14421), enabling
+Ruby applications to connect and query or store data in the data grid.
 
-1) First start a HotRod Server module of Infinispan
+## Introduction
 
-    ./startServer.sh -r hotrod
+This is a [Level-1
+client](http://community.jboss.org/wiki/HotRodProtocol#Client_Intelligence_1_byte),
+meaning that it is a basic client and does not participate in the data grid
+clustering.  The client currently only supports using the default cache, and
+all operations of the Hot Rod protocol are implemented except the [server
+stats](http://community.jboss.org/wiki/HotRodProtocol#stats_request)
+request.  
+
+## Installation
+
+    $ gem install infinispan-ruby-client
+
+## Usage
+
+Using the infinispan-ruby-client requires that you connect to an Infinispan
+server using the hotrod protocol.  
+
+1) First start Infinispan, specifying hotrod for the protocol 
+
+    $INFINISPAN_DIR/bin/startServer.sh -r hotrod
 
 2) Then write code
 
@@ -22,19 +43,19 @@ This is a Ruby HotRod client for the JBoss Infinispan Data Grid.
     time.class => Time
 
 
-# TODO
-* Support cache names (needs to be decided by Infinispan Team)
+## Todo
+* Support cache names 
 * Add ping operation before any call
 * Validate response headers
 * Get server statistics
 * Support for  lifespanSeconds and maxIdleTimeSeconds
-* Support for Intelligence Clients and Topologies and Listener
+* Support for intelligent clients and topologies, and listeners
 * Configuration files support
-* Transaction support # Not available in Infinispan as of version 4.1
+* Transaction support 
 * Support for Apache Avro Marshaller ??
 
 
-# License
+## License
 Copyright 2011 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
