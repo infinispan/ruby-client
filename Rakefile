@@ -25,10 +25,10 @@ require 'rake'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "infinispan-ruby-client"
-  gem.homepage = "https://github.com/lance/infinispan-ruby-client"
+  gem.homepage = "https://github.com/torquebox/infinispan-ruby-client"
   gem.license = "MIT"
-  gem.summary = %Q{Infinispan Hotrod Client}
-  gem.description = %Q{infinispan-hotrod-client provides native ruby access to the Infinispan Hotrod API}
+  gem.summary = %Q{Infinispan Hot Rod Client}
+  gem.description = %Q{infinispan-hotrod-client provides native ruby access to the Infinispan Hot Rod API}
   gem.email = "lball@redhat.com"
   gem.authors = ["Lance Ball"]
   gem.files = FileList["[A-Z]*.*", "lib/**/*"]

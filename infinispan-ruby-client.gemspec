@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Lance Ball"]
   s.date = %q{2011-06-08}
-  s.description = %q{infinispan-hotrod-client provides native ruby access to the Infinispan Hotrod API}
+  s.description = %q{infinispan-hotrod-client provides native ruby access to the Infinispan Hot Rod API}
   s.email = %q{lball@redhat.com}
   s.extra_rdoc_files = [
     "README.markdown"
@@ -24,17 +24,17 @@ Gem::Specification.new do |s|
     "lib/infinispan-ruby-client/remotecache.rb",
     "lib/infinispan-ruby-client/unsigned.rb"
   ]
-  s.homepage = %q{https://github.com/lance/infinispan-ruby-client}
+  s.homepage = %q{https://github.com/torquebox/infinispan-ruby-client}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
-  s.summary = %q{Infinispan Hotrod Client}
+  s.summary = %q{Infinispan Hot Rod Client}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<bundler>, [">= 0"])
+      s.add_development_dependency(%q<bundler>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<rake>, [">= 0"])
       s.add_development_dependency(%q<rspec>, ["~> 2.1"])
