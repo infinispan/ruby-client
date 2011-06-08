@@ -2,8 +2,10 @@
 
 [Infinispan](http://www.jboss.org/infinispan) is a scalable, high-availability
 data grid.  This is a native Ruby client implementation of Infinispan's [Hotrod
-client/server protocol](http://community.jboss.org/docs/DOC-14421), enabling
-Ruby applications to connect and query or store data in the data grid.
+client/server protocol](http://community.jboss.org/docs/DOC-14421), allowing
+Ruby applications to natively store and retrieve strings and Ruby objects in
+the Infinispan data grid.
+
 
 ## Introduction
 
