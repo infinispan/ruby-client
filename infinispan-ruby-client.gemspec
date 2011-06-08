@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{infinispan-ruby-client}
-  s.version = "0.0.0"
+  s.version = "0.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Lance Ball"]
-  s.date = %q{2011-06-07}
+  s.date = %q{2011-06-08}
   s.description = %q{infinispan-hotrod-client provides native ruby access to the Infinispan Hotrod API}
   s.email = %q{lball@redhat.com}
   s.extra_rdoc_files = [
