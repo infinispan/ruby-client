@@ -78,6 +78,24 @@ module Infinispan
       do_op( :operation => REPLACE_IF[0], :key => key, :value => value, :version => version )
     end
 
+    # Atomically increment a value by `amount`. Returns the 
+    # subsequent value for `key`. Returns false if atomicity fails.
+    def increment( key, amount = 1 )
+      if contains_key? key
+        version, original_value = get_versioned( key )
+        value = original_value + amount
+        replace_if_unmodified( key, version, value ) and value
+      else
+        put_if_absent( key, amount ) and amount
+      end
+    end
+
+    # Atomically decrement a value by `amount`. Returns the 
+    # subsequent value for `key`. Returns false if atomicity fails.
+    def decrement( key, amount = 1 )
+      increment( key, -amount )
+    end
+
     private
     def do_op( options )
       options[:cache] ||= @name

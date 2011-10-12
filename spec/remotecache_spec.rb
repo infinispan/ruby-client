@@ -137,6 +137,26 @@ describe "RemoteCache Functional Test" do
     everything.size.should == 2
   end
 
+  it "should support incrementing a key" do
+    @cache.increment("akey").should == 1
+    @cache.increment("akey").should == 2
+  end
+
+  it "should support incrementing by arbitrary amounts" do
+    @cache.increment("akey", 7).should == 7
+    @cache.increment("akey", 9).should == 16
+  end
+
+  it "should support decrementing a key" do
+    @cache.increment("akey", 10).should == 10
+    @cache.decrement("akey").should == 9
+  end
+
+  it "should support decrementing by arbitrary amounts" do
+    @cache.increment("akey", 10).should == 10
+    @cache.decrement("akey", 7).should == 3
+  end
+
   it "should accept cache names" 
   it "should support getting server statistics"
 end
