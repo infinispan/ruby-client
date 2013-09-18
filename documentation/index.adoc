@@ -1,0 +1,73 @@
+= Ruby Hot Rod Client
+The Infinispan Community
+:toc2:
+:icons: font
+:toclevels: 3
+:numbered:
+
+link:http://www.jboss.org/infinispan[Infinispan] is a scalable,
+high-availability data grid.
+This is a native Ruby client implementation of Infinispan's 
+link:http://infinispan.org/docs/6.0.x/user_guide/user_guide.html#_using_hot_rod_server[Hot Rod client/server protocol],
+allowing Ruby applications to natively store and retrieve strings and
+Ruby objects in the Infinispan data grid.
+
+== Introduction
+This is a link:http://infinispan.org/docs/6.0.x/user_guide/user_guide.html#_intelligence[Level-1 client],
+meaning that it is a basic client and cannot perform smart routing.
+The client currently only supports using the default cache, and all operations
+of the Hot Rod protocol are implemented except the
+link:http://infinispan.org/docs/6.0.x/user_guide/user_guide.html#_statistics[server statistics] request.  
+
+== Installation
+
+ $ gem install infinispan-ruby-client
+
+== Usage
+
+Using the infinispan-ruby-client requires that you connect to an Infinispan
+server using the hotrod protocol.  
+
+. First start Infinispan, specifying `hotrod` for the protocol 
+
+ $INFINISPAN_DIR/bin/startServer.sh -r hotrod
+
+. Then write code
+
+[source,ruby]
+----
+    require 'infinispan-ruby-client'
+    cache = Infinispan::RemoteCache.new => #<Infinispan::RemoteCache:0x100365a78 @name="", @host="localhost", @port=11222> 
+
+    # Store and retrieve a string
+    cache.put("Name", "Lance") => true 
+    cache.get("Name") => "Lance" 
+
+    # Store and retrieve a ruby object
+    cache.put("Time", Time.now) => true
+    time = cache.get("Time") => Tue Jun 07 17:45:17 -0400 2011
+    time.class => Time
+----
+
+== Todo
+* Support cache names 
+* Add ping operation before any call
+* Validate response headers
+* Get server statistics
+* Support for  lifespanSeconds and maxIdleTimeSeconds
+* Support for intelligent clients and topologies, and listeners
+* Configuration files support
+* Transaction support 
+* Support for Apache Avro Marshaller ??
+
+== Contributing back
+Contributions, as always, are welcome be it in the form of code, tests
+or documentation.
+
+=== Source code
+This client, along with tests and documentation, are in GitHub, located under
+link:https://github.com/infinispan/ruby-client[].
+Feel free to fork and issue pull requests on changes.
+For more information on working with this repository and GitHub, refer to the
+link:http://infinispan.org/docs/6.0.x/contributing/contributing.html#_source_control[Contributing Guide]
+for Infinispan.
